@@ -26,7 +26,7 @@ class CityRepositoryImpl @Inject constructor(
     
     override fun getCityEmissions(): Flow<List<CityEmission>> {
         return cityDao.getAllEmissions().map { entities ->
-            entities.map { 
+            entities.map {
                 CityEmission(
                     id = it.id.toLong(),
                     city = it.city,
