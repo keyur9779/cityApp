@@ -6,7 +6,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.testcityapp.domain.model.CityEmission
-import com.testcityapp.domain.repository.CityRepository
+import com.testcityapp.domain.usecase.CityRepository
 import com.testcityapp.domain.usecase.GetCityEmissionsUseCase
 import io.mockk.every
 import io.mockk.justRun
@@ -21,6 +21,7 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -119,6 +120,25 @@ class MainViewModelTest {
         viewModel.onPause(lifecycleOwner)
         
         // Then
+        verify { repository.stopProducing() }
+    }
+    
+    @Test
+    fun `test emissions StateFlow contains data from repository`() {
+        // Then - Verify that the emissions StateFlow has the correct data
+        val currentEmissions = viewModel.emissions.value
+        assertEquals(2, currentEmissions.size)
+        assertEquals("New York", currentEmissions[0].city)
+        assertEquals("Los Angeles", currentEmissions[1].city)
+    }
+    
+    @Test
+    fun `test onCleared calls stopProducing`() {
+        // When
+        viewModel.onCleared()
+        
+        // Then
+        verify { repository.stopProducing() }
         verify { repository.stopProducing() }
     }
 }

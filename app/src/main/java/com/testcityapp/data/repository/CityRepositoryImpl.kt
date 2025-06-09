@@ -4,7 +4,7 @@ import com.testcityapp.data.local.CityDao
 import com.testcityapp.data.local.CityEmissionEntity
 import com.testcityapp.domain.model.CityEmission
 import com.testcityapp.data.producer.CityEmissionProducer
-import com.testcityapp.domain.repository.CityRepository
+import com.testcityapp.domain.usecase.CityRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

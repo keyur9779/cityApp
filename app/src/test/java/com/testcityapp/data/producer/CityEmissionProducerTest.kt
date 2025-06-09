@@ -37,7 +37,7 @@ class CityEmissionProducerTest {
         every { lifecycle.currentState } returns state
         every { lifecycle.currentState.isAtLeast(any()) } returns true
         
-        producer = CityEmissionProducer(application)
+        producer = CityEmissionProducer()
     }
     
     @Test

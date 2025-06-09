@@ -155,10 +155,12 @@ dependencies {
 
     // Testing
     testImplementation(libs.junit)
-    testImplementation("org.robolectric:robolectric:4.11.0")
+    // Use direct coordinates for Robolectric
+    testImplementation("org.robolectric:robolectric:4.10.3")
     testImplementation("io.mockk:mockk:1.13.8")
     testImplementation("androidx.arch.core:core-testing:2.2.0")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    testImplementation("app.cash.turbine:turbine:1.0.0") // Flow testing library
     testImplementation("androidx.test:core:1.5.0")
     testImplementation("androidx.test:core-ktx:1.5.0")
     androidTestImplementation(libs.androidx.junit)

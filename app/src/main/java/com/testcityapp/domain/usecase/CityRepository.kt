@@ -1,4 +1,4 @@
-package com.testcityapp.domain.repository
+package com.testcityapp.domain.usecase
 
 import com.testcityapp.domain.model.CityEmission
 import kotlinx.coroutines.flow.Flow

@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import com.testcityapp.domain.repository.CityRepository
+import com.testcityapp.domain.usecase.CityRepository
 import com.testcityapp.domain.usecase.GetCityEmissionsUseCase
 import com.testcityapp.core.worker.WelcomeWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -52,7 +52,7 @@ class MainViewModel @Inject constructor(
         WorkManager.getInstance(application).enqueue(welcomeWorkRequest)
     }
 
-    override fun onCleared() {
+    public override fun onCleared() {
         super.onCleared()
         stopProducing()
     }

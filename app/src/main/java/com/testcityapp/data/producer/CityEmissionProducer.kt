@@ -11,7 +11,6 @@ import java.time.LocalDateTime
 import javax.inject.Inject
 
 class CityEmissionProducer @Inject constructor(
-    private val application: Application
 ) {
     private val citiesMutable = mutableListOf("New York", "Los Angeles", "Scranton", "Philadelphia", "Nashville", "Saint Louis", "Miami")
     private val colors = listOf("Yellow", "White", "Green", "Blue", "Red", "Black")
@@ -30,14 +29,12 @@ class CityEmissionProducer @Inject constructor(
                         city = randomCity,
                         color = randomColor,
                         timestamp = LocalDateTime.now(),
-                        // These would be real coordinates in a production app
                         latitude = getLatitudeFor(randomCity),
                         longitude = getLongitudeFor(randomCity)
                     )
                 )
-                delay(4000) // Wait 4 seconds before checking again
+                delay(5000) // Wait 5 seconds before checking again
             }
-            delay(1000)
         }
     }
     

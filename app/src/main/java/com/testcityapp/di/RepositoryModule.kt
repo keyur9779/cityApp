@@ -1,7 +1,7 @@
 package com.testcityapp.di
 
 import com.testcityapp.data.repository.CityRepositoryImpl
-import com.testcityapp.domain.repository.CityRepository
+import com.testcityapp.domain.usecase.CityRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
