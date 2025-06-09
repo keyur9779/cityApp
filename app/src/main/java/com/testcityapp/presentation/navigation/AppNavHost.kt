@@ -84,6 +84,7 @@ fun AppNavHost(
         ) { backStackEntry ->
             val emissionId = backStackEntry.arguments?.getLong("emissionId") ?: 0
             val emission = emissions.find { it.id == emissionId }
+            Log.d("Navigating"," to details for emission: ${emission}, city: -----")
 
             emission?.let {
                 // Schedule WorkManager toast

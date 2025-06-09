@@ -16,10 +16,10 @@
         android:theme="@style/Theme.Testcityapp"
         tools:targetApi="31">
         
-        <!-- Add your Google Maps API key here -->
+        <!-- Google Maps API key from BuildConfig -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="YOUR_API_KEY" />
+            android:value="${MAPS_API_KEY}" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
