@@ -46,8 +46,7 @@ class MainViewModel @Inject constructor(
 
         val welcomeWorkRequest = OneTimeWorkRequestBuilder<WelcomeWorker>()
             .setInputData(workData)
-            .setInitialDelay(5, TimeUnit.SECONDS)
-
+            .setInitialDelay(2, TimeUnit.SECONDS)
             .build()
 
         WorkManager.getInstance(application).enqueue(welcomeWorkRequest)

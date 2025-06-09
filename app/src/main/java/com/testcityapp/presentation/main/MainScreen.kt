@@ -2,6 +2,7 @@ package com.testcityapp.presentation.main
 
 import android.util.Log
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -28,6 +29,7 @@ import com.testcityapp.presentation.components.CityEmissionItem
 fun MainScreen(
     emissions: List<CityEmission>,
     onEmissionClick: (CityEmission) -> Unit,
+    selectedEmissionId: Long = -1,  // Default to -1 when no selection
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -53,17 +55,21 @@ fun MainScreen(
             } else {
                 // Show sorted list of emissions
                 LazyColumn(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(bottom = 16.dp) // Add some bottom padding
                 ) {
                     items(
                         items = emissions.sortedBy { it.city },
                         key = { it.id }
                     ) { emission ->
+                        // Check if this is the selected item
+                        val isSelected = emission.id == selectedEmissionId
+                        
                         CityEmissionItem(
                             emission = emission,
+                            isSelected = isSelected,
                             onItemClick = {
                                 Log.d("Navigating", "Clicked on emission: ${emission.id}, city: ${emission.city}")
-
                                 onEmissionClick(emission)
                             }
                         )

@@ -1,13 +1,17 @@
 package com.testcityapp.presentation.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -188,6 +192,7 @@ fun CityCard(
     subtitle: String? = null,
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
     contentColor: Color = MaterialTheme.colorScheme.onSurface,
+    elevation: Dp = 4.dp,
     onClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit = {}
@@ -202,7 +207,7 @@ fun CityCard(
         modifier = cardModifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp),
-        elevation = CardDefaults.cardElevation(4.dp),
+        elevation = CardDefaults.cardElevation(elevation),
         colors = CardDefaults.cardColors(
             containerColor = backgroundColor
         )
@@ -230,4 +235,25 @@ fun CityCard(
             content()
         }
     }
+}
+
+/**
+ * A vertical divider component for use in split screen layouts
+ *
+ * @param modifier Modifier to be applied to the component
+ * @param color The color of the divider
+ * @param thickness The thickness of the divider
+ */
+@Composable
+fun VerticalDivider(
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.outlineVariant,
+    thickness: Dp = 1.dp
+) {
+    Box(
+        modifier = modifier
+            .fillMaxHeight()
+            .width(thickness)
+            .background(color)
+    )
 }

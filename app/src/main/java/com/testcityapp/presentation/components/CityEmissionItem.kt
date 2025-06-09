@@ -14,6 +14,7 @@ import java.time.format.DateTimeFormatter
 fun CityEmissionItem(
     emission: CityEmission,
     onItemClick: () -> Unit,
+    isSelected: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     val textColor = when (emission.color.lowercase()) {
@@ -26,10 +27,22 @@ fun CityEmissionItem(
         else -> MaterialTheme.colorScheme.onSurface
     }
     
+    // Change backgroundColor based on selection state
+    val backgroundColor = if (isSelected) {
+        MaterialTheme.colorScheme.primaryContainer
+    } else {
+        MaterialTheme.colorScheme.surface
+    }
+    
+    // Add a subtle border for selected items
+    val elevation = if (isSelected) 8.dp else 4.dp
+    
     CityCard(
         title = emission.city,
         subtitle = emission.timestamp.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
         contentColor = textColor,
+        backgroundColor = backgroundColor,
+        elevation = elevation,
         onClick = {
             Log.d("Navigating", "Clicked on emission: ${emission.city}")
             onItemClick()

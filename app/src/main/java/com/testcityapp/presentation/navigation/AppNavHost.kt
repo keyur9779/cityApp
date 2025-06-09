@@ -1,12 +1,16 @@
 package com.testcityapp.presentation.navigation
 
 import android.util.Log
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -17,11 +21,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.testcityapp.core.utils.isSideBySideMode
 import com.testcityapp.presentation.details.DetailsScreen
 import com.testcityapp.presentation.main.MainScreen
 import com.testcityapp.presentation.main.MainViewModel
 import com.testcityapp.presentation.splash.SplashScreen
-import com.testcityapp.core.utils.isSideBySideMode
 
 @Composable
 fun AppNavHost(
@@ -47,15 +51,13 @@ fun AppNavHost(
     ) {
         composable(AppRoute.Splash.route) {
             SplashScreen(
-                onNavigateToMain = { navController.navigate(AppRoute.Main.route) }
+                onNavigateToMain = {
+                    navController.navigate(AppRoute.Main.route) {
+                        popUpTo(AppRoute.Splash.route) { inclusive = true }
+                    }
+                }
             )
 
-            // Navigate to main screen when first emission happens
-            if (emissions.isNotEmpty()) {
-                navController.navigate(AppRoute.Main.route) {
-                    popUpTo(AppRoute.Splash.route) { inclusive = true }
-                }
-            }
         }
 
         composable(AppRoute.Main.route) {
@@ -63,18 +65,16 @@ fun AppNavHost(
                 emissions = emissions,
                 onEmissionClick = { emission ->
                     // Debug log to check emission ID
-                    Log.d("Navigating"," to details for emission: ${emission.id}, city: ${emission.city}")
-                    // Make sure we're using a valid ID for navigation
-                    if (emission.id > 0) {
-                        navController.navigate(AppRoute.Details.createRoute(emission.id))
-                    } else {
-                        // Find the emission with the same city name in the emissions list
-                        val matchingEmission = emissions.find { it.city == emission.city }
-                        if (matchingEmission != null) {
-                            navController.navigate(AppRoute.Details.createRoute(matchingEmission.id))
-                        }
-                    }
+                    Log.d(
+                        "Navigating",
+                        " to details for emission: ${emission.id}, city: ${emission.city}"
+                    )
+
+                    // Skip navigation in side-by-side mode to avoid creating duplicate layouts
+
+                    navController.navigate(AppRoute.Details.createRoute(emission.id))
                 }
+
             )
         }
 
@@ -84,30 +84,67 @@ fun AppNavHost(
         ) { backStackEntry ->
             val emissionId = backStackEntry.arguments?.getLong("emissionId") ?: 0
             val emission = emissions.find { it.id == emissionId }
-            Log.d("Navigating"," to details for emission: ${emission}, city: -----")
+            Log.d("Navigating", " to details for emission: ${emission}, city: -----")
 
             emission?.let {
                 // Schedule WorkManager toast
-                mainViewModel.scheduleWelcomeToast(emission.city)
 
-                // Handle tablet split view in landscape
+                // Create a persistent state that survives recompositions
+                val selectedEmissionState = remember {
+                    mutableStateOf(emission)
+                }
+
+                // Update the selected emission when the navigation argument changes
+                LaunchedEffect(emission) {
+                    selectedEmissionState.value = emission
+                    mainViewModel.scheduleWelcomeToast(emission.city)
+                }
+
+                // Use our adaptive layout for better responsiveness
                 if (isSideBySideMode()) {
                     Row(modifier = Modifier.fillMaxSize()) {
-                        MainScreen(
-                            emissions = emissions,
-                            onEmissionClick = { clickedEmission ->
-                                // Make sure we navigate only if the emission is still in the list
-                                val targetEmission = emissions.find { it.id == clickedEmission.id }
-                                if (targetEmission != null) {
-                                    navController.navigate(AppRoute.Details.createRoute(targetEmission.id))
-                                }
-                            },
-                            modifier = Modifier.weight(1f)
-                        )
-                        DetailsScreen(
-                            emission = emission,
-                            modifier = Modifier.weight(1f)
-                        )
+                        // Master view (list of cities)
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxSize()
+                        ) {
+                            MainScreen(
+                                emissions = emissions,
+                                onEmissionClick = { clickedEmission ->
+                                    // Find the emission and update the state
+                                    val targetEmission =
+                                        emissions.find { it.id == clickedEmission.id }
+                                    if (targetEmission != null) {
+                                        selectedEmissionState.value = targetEmission
+                                        // Log selection without navigation
+                                        Log.d(
+                                            "SplitView",
+                                            "Selected emission: ${targetEmission.city}"
+                                        )
+                                    }
+                                },
+                                // Add additional parameter to highlight the currently selected item
+                                selectedEmissionId = selectedEmissionState.value.id,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+
+                        // Add a visual separator between panels
+                        com.testcityapp.presentation.components.VerticalDivider()
+
+                        // Detail view (map and city details)
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxSize()
+                        ) {
+                            DetailsScreen(
+                                emission = selectedEmissionState.value,
+                                isInSplitView = true,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
                     }
                 } else {
                     DetailsScreen(emission = emission)
