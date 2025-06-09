@@ -2,15 +2,12 @@ package com.testcityapp.presentation.main
 
 import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
-import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.testcityapp.domain.model.CityEmission
 import com.testcityapp.domain.repository.CityRepository
 import com.testcityapp.domain.usecase.GetCityEmissionsUseCase
-import com.testcityapp.worker.WelcomeWorker
 import io.mockk.every
 import io.mockk.justRun
 import io.mockk.mockk
@@ -24,7 +21,6 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.junit.After
-import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test

@@ -7,18 +7,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import com.testcityapp.presentation.components.AppTitleText
+import com.testcityapp.presentation.components.LoadingContent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.testcityapp.domain.model.CityEmission
+import com.testcityapp.presentation.components.AppTitleText
 import com.testcityapp.presentation.components.CityEmissionItem
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,7 +34,7 @@ fun MainScreen(
         modifier = modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text("City Emissions") },
+                title = { AppTitleText(text = "City Emissions") },
                 colors = TopAppBarDefaults.mediumTopAppBarColors()
             )
         }
@@ -44,15 +46,9 @@ fun MainScreen(
         ) {
             if (emissions.isEmpty()) {
                 // Show loading indicator if no emissions yet
-                CircularProgressIndicator(
+                LoadingContent(
+                    message = "Waiting for first emission...",
                     modifier = Modifier.align(Alignment.Center)
-                )
-                Text(
-                    text = "Waiting for first emission...",
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .padding(top = 60.dp),
-                    textAlign = TextAlign.Center
                 )
             } else {
                 // Show sorted list of emissions

@@ -1,4 +1,4 @@
-package com.testcityapp.worker
+package com.testcityapp.core.worker
 
 import android.content.Context
 import android.widget.Toast

@@ -21,7 +21,7 @@ import com.testcityapp.presentation.details.DetailsScreen
 import com.testcityapp.presentation.main.MainScreen
 import com.testcityapp.presentation.main.MainViewModel
 import com.testcityapp.presentation.splash.SplashScreen
-import com.testcityapp.presentation.ui.isSideBySideMode
+import com.testcityapp.core.utils.isSideBySideMode
 
 @Composable
 fun AppNavHost(
