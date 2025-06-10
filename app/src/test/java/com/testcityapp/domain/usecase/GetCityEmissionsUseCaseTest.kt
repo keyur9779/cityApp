@@ -1,5 +1,6 @@
 package com.testcityapp.domain.usecase
 
+import androidx.compose.ui.graphics.Color
 import app.cash.turbine.test
 import com.testcityapp.domain.model.CityEmission
 import io.mockk.every
@@ -37,6 +38,7 @@ class GetCityEmissionsUseCaseTest {
                 id = 1,
                 city = "New York",
                 color = "Blue",
+                displayColor = Color.Blue,
                 timestamp = LocalDateTime.now(),
                 latitude = 40.7128,
                 longitude = -74.0060
@@ -45,6 +47,7 @@ class GetCityEmissionsUseCaseTest {
                 id = 2,
                 city = "San Francisco",
                 color = "Red",
+                displayColor = Color.Red,
                 timestamp = LocalDateTime.now(),
                 latitude = 37.7749,
                 longitude = -122.4194

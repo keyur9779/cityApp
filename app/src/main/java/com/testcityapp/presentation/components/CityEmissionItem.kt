@@ -17,16 +17,7 @@ fun CityEmissionItem(
     isSelected: Boolean = false,
     modifier: Modifier = Modifier
 ) {
-    val textColor = when (emission.color.lowercase()) {
-        "yellow" -> Color.Yellow
-        "white" -> Color.White
-        "green" -> Color.Green
-        "blue" -> Color.Blue
-        "red" -> Color.Red
-        "black" -> Color.Black
-        else -> MaterialTheme.colorScheme.onSurface
-    }
-    
+
     // Change backgroundColor based on selection state
     val backgroundColor = if (isSelected) {
         MaterialTheme.colorScheme.primaryContainer
@@ -40,7 +31,7 @@ fun CityEmissionItem(
     CityCard(
         title = emission.city,
         subtitle = emission.timestamp.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-        contentColor = textColor,
+        contentColor = emission.displayColor,
         backgroundColor = backgroundColor,
         elevation = elevation,
         onClick = {

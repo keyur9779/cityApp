@@ -1,6 +1,5 @@
 package com.testcityapp.data.producer
 
-import android.app.Application
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.testcityapp.domain.model.CityEmission
@@ -17,10 +16,6 @@ class CityEmissionProducer @Inject constructor(
     
     fun produceEmissions(): Flow<CityEmission> = flow {
         while (citiesMutable.isNotEmpty()) {
-            // Only emit if the app is in foreground
-            print("asdasdasd-----")
-            if (true) {
-                print("asdasdasd")
                 // Get a random city and remove it from the list
                 val randomIndex = citiesMutable.indices.random()
                 val randomCity = citiesMutable.removeAt(randomIndex)
@@ -36,7 +31,6 @@ class CityEmissionProducer @Inject constructor(
                     )
                 )
                 delay(5000) // Wait 5 seconds before checking again
-            }
         }
     }
     

@@ -1,5 +1,6 @@
 package com.testcityapp.data.repository
 
+import androidx.compose.ui.graphics.Color
 import com.testcityapp.data.local.CityDao
 import com.testcityapp.data.local.CityEmissionEntity
 import com.testcityapp.domain.model.CityEmission
@@ -31,6 +32,7 @@ class CityRepositoryImpl @Inject constructor(
                     id = it.id.toLong(),
                     city = it.city,
                     color = it.color,
+                    displayColor = mapColorNameToColor(it.color),
                     timestamp = LocalDateTime.ofEpochSecond(it.timestamp.toLong() / 1000, 0, java.time.ZoneOffset.UTC),
                     latitude = it.latitude,
                     longitude = it.longitude
@@ -39,12 +41,26 @@ class CityRepositoryImpl @Inject constructor(
         }
     }
     
+    private fun mapColorNameToColor(colorName: String): Color {
+        return when (colorName.lowercase()) {
+            "yellow" -> Color.Yellow
+            "white" -> Color.White
+            "green" -> Color.Green
+            "blue" -> Color.Blue
+            "red" -> Color.Red
+            "black" -> Color.Black
+            else -> Color.Gray
+        }
+    }
+    
     private suspend fun insertEmission(emission: CityEmission) {
+        // The color field is already saved in the entity;
+        // displayColor is computed when retrieving from database
         cityDao.insertEmission(
             CityEmissionEntity(
                 city = emission.city,
                 color = emission.color,
-                timestamp = (emission.timestamp.toEpochSecond(java.time.ZoneOffset.UTC) * 1000).toString() ,
+                timestamp = (emission.timestamp.toEpochSecond(java.time.ZoneOffset.UTC) * 1000).toString(),
                 latitude = emission.latitude,
                 longitude = emission.longitude
             )
@@ -54,7 +70,11 @@ class CityRepositoryImpl @Inject constructor(
     override fun startProducing() {
         scope.launch {
             producer.produceEmissions().collect { emission ->
-                insertEmission(emission)
+                // Enhance the emission with the display color
+                val enhancedEmission = emission.copy(
+                    displayColor = mapColorNameToColor(emission.color)
+                )
+                insertEmission(enhancedEmission)
             }
         }
     }

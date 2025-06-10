@@ -1,5 +1,6 @@
 package com.testcityapp.data.repository
 
+import androidx.compose.ui.graphics.Color
 import app.cash.turbine.test
 import com.testcityapp.data.local.CityDao
 import com.testcityapp.data.local.CityEmissionEntity
@@ -116,6 +117,7 @@ class CityRepositoryImplTest {
         val emission1 = CityEmission(
             city = "Chicago",
             color = "Green",
+            displayColor = Color.Green,
             timestamp = LocalDateTime.now(),
             latitude = 41.8781,
             longitude = -87.6298
@@ -124,6 +126,7 @@ class CityRepositoryImplTest {
         val emission2 = CityEmission(
             city = "Miami",
             color = "Blue",
+            displayColor = Color.Blue,
             timestamp = LocalDateTime.now(),
             latitude = 25.7617,
             longitude = -80.1918
@@ -167,7 +170,7 @@ class CityRepositoryImplTest {
 
         every { emissionProducer.produceEmissions() } returns flow {
             while (true) {
-                emit(CityEmission(city = "Test City", color = "Blue"))
+                emit(CityEmission(city = "Test City", color = "Blue", displayColor = Color.Blue))
                 kotlinx.coroutines.delay(1000)
             }
         }
@@ -195,6 +198,7 @@ class CityRepositoryImplTest {
         val emission = CityEmission(
             city = "Houston",
             color = "Orange",
+            displayColor = Color.Yellow,  // Closest match to Orange
             timestamp = LocalDateTime.now(),
             latitude = 29.7604,
             longitude = -95.3698

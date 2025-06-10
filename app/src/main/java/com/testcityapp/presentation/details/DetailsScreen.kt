@@ -43,22 +43,10 @@ fun DetailsScreen(
     isInSplitView: Boolean = false,
     modifier: Modifier = Modifier
 ) {
-    // Convert the color string to Color object
-    val backgroundColor = remember(emission.color) {
-        when (emission.color.lowercase()) {
-            "yellow" -> Color.Yellow
-            "white" -> Color.White
-            "green" -> Color.Green
-            "blue" -> Color.Blue
-            "red" -> Color.Red
-            "black" -> Color.Black
-            else -> Color.Gray
-        }
-    }
-    
+
     // For text color, use white on dark backgrounds and black on light backgrounds
-    val textColor = remember(backgroundColor) {
-        when (backgroundColor) {
+    val textColor = remember(emission.displayColor) {
+        when (emission.displayColor) {
             Color.White, Color.Yellow, Color.Green -> Color.Black
             else -> Color.White
         }
@@ -105,7 +93,7 @@ fun DetailsScreen(
                     }
                 },
                 colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = backgroundColor
+                    containerColor = emission.displayColor
                 )
             )
         }

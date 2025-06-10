@@ -59,7 +59,7 @@ fun MainScreen(
                     contentPadding = PaddingValues(bottom = 16.dp) // Add some bottom padding
                 ) {
                     items(
-                        items = emissions.sortedBy { it.city },
+                        items = emissions,
                         key = { it.id }
                     ) { emission ->
                         // Check if this is the selected item
