@@ -33,15 +33,18 @@ fun AppNavHost(
     navController: NavHostController = rememberNavController(),
     startDestination: String = AppRoute.Splash.route
 ) {
+    // Use hiltViewModel() which is configuration-change aware
     val mainViewModel: MainViewModel = hiltViewModel()
     val emissions by mainViewModel.emissions.collectAsState()
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
 
-    // Observe lifecycle to control emission production
+    // Observe lifecycle to control emission production, but only do this once at the NavHost level
     val lifecycleOwner = LocalLifecycleOwner.current
-    DisposableEffect(lifecycleOwner) {
+    DisposableEffect(Unit) { // Use Unit instead of lifecycleOwner to prevent recreation on config changes
+        Log.d("AppNavHost", "Adding lifecycle observer to MainViewModel")
         lifecycleOwner.lifecycle.addObserver(mainViewModel)
         onDispose {
+            Log.d("AppNavHost", "Removing lifecycle observer from MainViewModel")
             lifecycleOwner.lifecycle.removeObserver(mainViewModel)
         }
     }
@@ -95,10 +98,16 @@ fun AppNavHost(
                     mutableStateOf(emission)
                 }
 
+                // Track if we've already scheduled the welcome toast for this emission
+                val toastScheduled = remember(emission.id) { mutableStateOf(false) }
+                
                 // Update the selected emission when the navigation argument changes
-                LaunchedEffect(selectedEmissionState) {
-                    //selectedEmissionState.value = emission
-                    mainViewModel.scheduleWelcomeToast(emission.city)
+                // Use the emission.id as the key to prevent re-running on configuration changes
+                LaunchedEffect(emission.id) {
+                    if (!toastScheduled.value) {
+                        mainViewModel.scheduleWelcomeToast(emission.city)
+                        toastScheduled.value = true
+                    }
                 }
 
                 // Use our adaptive layout for better responsiveness
@@ -137,15 +146,22 @@ fun AppNavHost(
                                 .weight(1f)
                                 .fillMaxSize()
                         ) {
+                            // Use remember with the emission to prevent unnecessary recompositions
+                            val currentEmission = remember(selectedEmissionState.value) {
+                                selectedEmissionState.value
+                            }
+                            
                             DetailsScreen(
-                                emission = selectedEmissionState.value,
+                                emission = currentEmission,
                                 isInSplitView = true,
                                 modifier = Modifier.fillMaxSize()
                             )
                         }
                     }
                 } else {
-                    DetailsScreen(emission = emission)
+                    // Use remember with emission.id to prevent unnecessary recompositions on orientation changes
+                    val stableEmission = remember(emission.id) { emission }
+                    DetailsScreen(emission = stableEmission)
                 }
             }
         }

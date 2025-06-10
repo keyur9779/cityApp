@@ -26,6 +26,8 @@ class CityRepositoryImpl @Inject constructor(
 ) : CityRepository {
     
     private val scope = CoroutineScope(dispatcher + SupervisorJob())
+    // Track if production is already active
+    private var isProducing = false
     
     override fun getCityEmissions(): Flow<List<CityEmission>> {
         return cityDao.getAllEmissions().map { entities ->
@@ -91,18 +93,29 @@ class CityRepositoryImpl @Inject constructor(
     }
     
     override fun startProducing() {
+        if (isProducing) {
+            return // Don't start production if it's already running
+        }
+        
+        isProducing = true
         scope.launch {
-            producer.produceEmissions().collect { emission ->
-                // Enhance the emission with the display color
-                val enhancedEmission = emission.copy(
-                    displayColor = mapColorNameToColor(emission.color)
-                )
-                insertEmission(enhancedEmission)
+            try {
+                producer.produceEmissions().collect { emission ->
+                    // Enhance the emission with the display color
+                    val enhancedEmission = emission.copy(
+                        displayColor = mapColorNameToColor(emission.color)
+                    )
+                    insertEmission(enhancedEmission)
+                }
+            } finally {
+                // Set flag to false when the flow collection completes for any reason
+                isProducing = false
             }
         }
     }
     
     override fun stopProducing() {
         scope.coroutineContext.cancelChildren()
+        isProducing = false
     }
 }

@@ -27,19 +27,32 @@ class MainViewModel @Inject constructor(
     private val stopEmissionProductionUseCase: StopEmissionProductionUseCase
 ) : AndroidViewModel(application), DefaultLifecycleObserver {
 
+    // Track whether we're already producing emissions to prevent duplicate subscriptions
+    var isProducing = false
+
     val emissions = getCityEmissionsUseCase().stateIn(
         viewModelScope,
-        SharingStarted.WhileSubscribed(1000),
+        SharingStarted.WhileSubscribed(5000), // Increased timeout to handle orientation changes
         emptyList()
     )
 
 
     fun startProducing() {
-        startEmissionProductionUseCase()
+        if (!isProducing) {
+            Log.d("MainViewModel", "Starting emission production")
+            startEmissionProductionUseCase()
+            isProducing = true
+        } else {
+            Log.d("MainViewModel", "Emission production already active, skipping")
+        }
     }
 
     fun stopProducing() {
-        stopEmissionProductionUseCase()
+        if (isProducing) {
+            Log.d("MainViewModel", "Stopping emission production")
+            stopEmissionProductionUseCase()
+            isProducing = false
+        }
     }
 
     fun scheduleWelcomeToast(cityName: String) {
@@ -57,16 +70,19 @@ class MainViewModel @Inject constructor(
         WorkManager.getInstance(application).enqueue(welcomeWorkRequest)
     }
 
-    public override fun onCleared() {
-        super.onCleared()
-        stopProducing()
-    }
-
+    // Only start/stop on actual app lifecycle events, not on configuration changes
     override fun onResume(owner: LifecycleOwner) {
         startProducing()
     }
 
     override fun onPause(owner: LifecycleOwner) {
+        // We don't want to stop production on configuration changes
+        // Let's not call stopProducing() here, we'll handle this in onCleared()
+    }
+    
+    // This is only called when the ViewModel is actually destroyed, not on config changes
+   public override fun onCleared() {
+        super.onCleared()
         stopProducing()
     }
 }
