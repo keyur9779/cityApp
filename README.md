@@ -28,11 +28,56 @@ The app follows Clean Architecture principles and MVVM pattern:
 - Google Maps for location display
 - Kotlin Coroutines and Flow for asynchronous operations
 
+## Prerequisites
+
+- **JDK 17** (required)
+- Android Studio Hedgehog (2023.1.1) or newer
+- Android SDK 35
+- Gradle 8.5
+
+## Required Software Versions
+
+```
+Java Development Kit (JDK):         17
+Kotlin:                             1.9.22
+Compose Compiler:                   1.5.8
+Android Gradle Plugin:              8.2.2
+Gradle:                             8.5
+Room:                               2.6.1
+Hilt:                               2.48.1
+Jetpack Compose:                    2023.10.01 (BOM)
+Android Minimum SDK:                26
+Android Target SDK:                 35
+```
+
 ## Getting Started
 
-1. Clone the repository
-2. Add your Google Maps API key in the AndroidManifest.xml
-3. Build and run the project using Android Studio
+1. Clone the repository:
+   ```shell
+   git clone https://github.com/yourusername/cityApp.git
+   cd cityApp
+   ```
+
+2. Configure Google Maps API key:
+   - Add the following to your `local.properties` file:
+     ```
+     MAPS_API_KEY=your_google_maps_api_key_here
+     ```
+
+3. Build and run:
+   ```shell
+   ./gradlew build
+   ```
+   
+   Or open the project in Android Studio and run from there.
+
+## Project Structure
+
+- `app/src/main/java/com/testcityapp/`
+  - `data/`: Repository implementations, local database, entities
+  - `domain/`: Business logic, models, repository interfaces
+  - `presentation/`: UI components, ViewModels
+  - `di/`: Dependency injection modules
 
 ## Testing
 
@@ -42,6 +87,26 @@ The project includes unit tests for:
 - MainViewModel
 
 Run the tests using:
-```
+```shell
 ./gradlew test
 ```
+
+Run a specific test:
+```shell
+./gradlew testDebugUnitTest --tests "com.testcityapp.data.repository.CityRepositoryImplTest"
+```
+
+## Troubleshooting
+
+If you encounter build errors:
+
+1. Make sure JDK 17 is installed and configured in Android Studio
+2. Verify Gradle settings match the required versions
+3. Run with `--stacktrace` flag for detailed error information
+   ```shell
+   ./gradlew build --stacktrace
+   ```
+
+## License
+
+[Add your license information here]
