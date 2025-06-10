@@ -57,6 +57,16 @@ class CityDaoTest {
             // Add the new emission
             emissions.add(emission)
         }
+        
+        override suspend fun getEmissionByCity(cityName: String): CityEmissionEntity? {
+            return emissions.firstOrNull { it.city == cityName }
+        }
+        
+        override suspend fun updateEmission(emission: CityEmissionEntity) {
+            // Remove existing emission with the same ID and add the updated one
+            emissions.removeIf { it.id == emission.id }
+            emissions.add(emission)
+        }
     }
 
     @Test
@@ -217,6 +227,57 @@ class CityDaoTest {
             assert(items.first().id == 1L)
             assert(items.first().city == "Seattle")
             assert(items.first().color == "Green") // Updated color
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun getEmissionByCityAndUpdateEmission() = runTest {
+        // Given: A city emission entity
+        val now = LocalDateTime.now()
+        val timestamp1 = (now.toEpochSecond(ZoneOffset.UTC) * 1000).toString()
+        val timestamp2 = ((now.plusHours(1)).toEpochSecond(ZoneOffset.UTC) * 1000).toString()
+        
+        val entity = CityEmissionEntity(
+            id = 1L,
+            city = "Chicago",
+            color = "Blue",
+            timestamp = timestamp1,
+            latitude = 41.8781,
+            longitude = -87.6298
+        )
+        
+        // When: Inserting the entity
+        cityDao.insertEmission(entity)
+        
+        // Then: It should be retrievable by city name
+        val retrievedEntity = cityDao.getEmissionByCity("Chicago")
+        assert(retrievedEntity != null)
+        assert(retrievedEntity?.id == 1L)
+        assert(retrievedEntity?.city == "Chicago")
+        assert(retrievedEntity?.color == "Blue")
+        
+        // When: Updating the entity with new details
+        val updatedEntity = retrievedEntity!!.copy(
+            color = "Red",
+            timestamp = timestamp2,
+            latitude = 41.8800,
+            longitude = -87.6400
+        )
+        cityDao.updateEmission(updatedEntity)
+        
+        // Then: The updated entity should be retrievable and contain the new values
+        cityDao.getAllEmissions().test(timeout = 5.seconds) {
+            val items = awaitItem()
+            assert(items.size == 1)
+            with(items.first()) {
+                assert(id == 1L)
+                assert(city == "Chicago")
+                assert(color == "Red") // Color changed
+                assert(timestamp == timestamp2) // Timestamp changed
+                assert(latitude == 41.8800) // Coordinates changed
+                assert(longitude == -87.6400)
+            }
             cancelAndConsumeRemainingEvents()
         }
     }

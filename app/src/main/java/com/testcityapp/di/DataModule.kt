@@ -10,6 +10,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton
 
 @Module
@@ -36,5 +38,15 @@ object DataModule {
     @Singleton
     fun provideCityEmissionProducer(): CityEmissionProducer {
         return CityEmissionProducer()
+    }
+    
+    /**
+     * Provides a CoroutineDispatcher for dependency injection.
+     * Using IO dispatcher for actual app usage and potentially a test dispatcher for tests.
+     */
+    @Provides
+    @Singleton
+    fun provideCoroutineDispatcher(): CoroutineDispatcher {
+        return Dispatchers.IO
     }
 }
