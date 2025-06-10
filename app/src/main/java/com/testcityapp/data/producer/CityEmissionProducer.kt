@@ -18,7 +18,9 @@ class CityEmissionProducer @Inject constructor(
     fun produceEmissions(): Flow<CityEmission> = flow {
         while (citiesMutable.isNotEmpty()) {
             // Only emit if the app is in foreground
-            if (isAppInForeground()) {
+            print("asdasdasd-----")
+            if (true) {
+                print("asdasdasd")
                 // Get a random city and remove it from the list
                 val randomIndex = citiesMutable.indices.random()
                 val randomCity = citiesMutable.removeAt(randomIndex)

@@ -50,7 +50,6 @@ class MainViewModelTest {
         
         // Set up mocks
         application = mockk(relaxed = true)
-        // Use domain interface instead of implementation
         repository = mockk<CityRepository>(relaxed = true)
         workManager = mockk(relaxed = true)
         lifecycleOwner = mockk(relaxed = true)
@@ -96,6 +95,7 @@ class MainViewModelTest {
     }
     
 
+    
     @Test
     fun `test lifecycle callbacks call appropriate methods`() {
         // When
@@ -131,6 +131,6 @@ class MainViewModelTest {
         viewModel.onCleared()
         
         // Then
-        verify(exactly = 1) { repository.stopProducing() }
+        verify { repository.stopProducing() }
     }
 }

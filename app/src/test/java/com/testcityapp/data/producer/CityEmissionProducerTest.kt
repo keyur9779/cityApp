@@ -25,13 +25,12 @@ class CityEmissionProducerTest {
     @Before
     fun setUp() {
         // Create a proper mocked lifecycle owner
-        val lifecycleOwner = mockk<ProcessLifecycleOwner>()
+        val lifecycleOwner = mockk<ProcessLifecycleOwner>(relaxed = true)
         val lifecycle = LifecycleRegistry(lifecycleOwner)
         lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
         
         // Mock ProcessLifecycleOwner static methods
-        mockkStatic(ProcessLifecycleOwner::class)
-        every { ProcessLifecycleOwner.get() } returns lifecycleOwner
+        //every { ProcessLifecycleOwner.get() } returns lifecycleOwner
         every { lifecycleOwner.lifecycle } returns lifecycle
         
         // Create the producer
