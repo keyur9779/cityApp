@@ -64,6 +64,10 @@ class MainViewModelTest {
         mockkStatic(WorkManager::class)
         every { WorkManager.getInstance(any<Application>()) } returns workManager
         
+        // Mock Log.d to fix "method not mocked" error
+        mockkStatic(android.util.Log::class)
+        every { android.util.Log.d(any(), any()) } returns 0
+        
         // Create the use cases with repository that returns test data
         val testEmissions = listOf(
             CityEmission(id = 1, city = "New York", color = "Blue", displayColor = Color.Blue, timestamp = LocalDateTime.now()),
@@ -86,47 +90,52 @@ class MainViewModelTest {
     
     @Test
     fun `test startProducing calls startEmissionProductionUseCase`() {
-        // Given - Mock the use case
+        // Given - Mock the use case and ensure isProducing is false
         justRun { startEmissionProductionUseCase() }
+        viewModel.isProducing = false
         
         // When
         viewModel.startProducing()
         
         // Then
         verify { startEmissionProductionUseCase() }
+        // Check flag was updated
+        assert(viewModel.isProducing)
     }
     
     @Test
     fun `test stopProducing calls stopEmissionProductionUseCase`() {
-        // Given - Mock the use case
+        // Given - Mock the use case and ensure isProducing is true
         justRun { stopEmissionProductionUseCase() }
+        viewModel.isProducing = true
         
         // When
         viewModel.stopProducing()
         
         // Then
         verify { stopEmissionProductionUseCase() }
+        // Check flag was updated
+        assert(!viewModel.isProducing)
     }
     
 
     
     @Test
     fun `test lifecycle callbacks call appropriate use cases`() {
-        // Given - Mock the use cases
+        // Given - Mock the use cases and ensure isProducing is false
         justRun { startEmissionProductionUseCase() }
         justRun { stopEmissionProductionUseCase() }
+        viewModel.isProducing = false
         
-        // When
+        // When - Resume should start producing
         viewModel.onResume(lifecycleOwner)
         
-        // Then
+        // Then - Verify start was called
         verify { startEmissionProductionUseCase() }
+        assert(viewModel.isProducing)
         
-        // When
-        viewModel.onPause(lifecycleOwner)
-        
-        // Then
-        verify { stopEmissionProductionUseCase() }
+        // Note: onPause no longer stops production with the updated design
+        // We only stop production in onCleared, so we don't test that here
     }
     
     @Test
@@ -167,8 +176,9 @@ class MainViewModelTest {
     
     @Test
     fun `test onCleared calls stopEmissionProductionUseCase`() {
-        // Given - Mock the use case
+        // Given - Mock the use case and ensure isProducing is true
         justRun { stopEmissionProductionUseCase() }
+        viewModel.isProducing = true
         
         // When
         viewModel.onCleared()
