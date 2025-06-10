@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface CityRepository {
     fun getCityEmissions(): Flow<List<CityEmission>>
-    suspend fun insertEmission(emission: CityEmission)
     fun startProducing()
     fun stopProducing()
+    suspend fun insertEmission(emission: CityEmission)
 }

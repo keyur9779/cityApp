@@ -8,8 +8,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import com.testcityapp.domain.usecase.CityRepository
 import com.testcityapp.domain.usecase.GetCityEmissionsUseCase
+import com.testcityapp.domain.usecase.StartEmissionProductionUseCase
+import com.testcityapp.domain.usecase.StopEmissionProductionUseCase
 import com.testcityapp.core.worker.WelcomeWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -21,7 +22,8 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val application: Application,
     getCityEmissionsUseCase: GetCityEmissionsUseCase,
-    private val cityRepository: CityRepository
+    private val startEmissionProductionUseCase: StartEmissionProductionUseCase,
+    private val stopEmissionProductionUseCase: StopEmissionProductionUseCase
 ) : AndroidViewModel(application), DefaultLifecycleObserver {
 
     val emissions = getCityEmissionsUseCase().stateIn(
@@ -32,11 +34,11 @@ class MainViewModel @Inject constructor(
 
 
     fun startProducing() {
-        cityRepository.startProducing()
+        startEmissionProductionUseCase()
     }
 
     fun stopProducing() {
-        cityRepository.stopProducing()
+        stopEmissionProductionUseCase()
     }
 
     fun scheduleWelcomeToast(cityName: String) {

@@ -6,7 +6,6 @@ import com.testcityapp.data.local.CityDao
 import com.testcityapp.data.local.CityDatabase
 import com.testcityapp.data.producer.CityEmissionProducer
 import com.testcityapp.data.repository.CityRepositoryImpl
-import com.testcityapp.domain.usecase.CityRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

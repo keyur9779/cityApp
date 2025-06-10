@@ -22,6 +22,7 @@ import com.testcityapp.presentation.components.AppText
 import com.testcityapp.presentation.components.AppTitleText
 import androidx.compose.runtime.Composable
 import com.testcityapp.core.utils.toFormattedString
+import com.testcityapp.core.utils.formatCoordinates
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -177,7 +178,7 @@ fun DetailsScreen(
                         ) {
                             AppBodyText(text = "Coordinates:")
                             AppText(
-                                text = "(${emission.latitude}, ${emission.longitude})",
+                                text = emission.formatCoordinates(),
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }

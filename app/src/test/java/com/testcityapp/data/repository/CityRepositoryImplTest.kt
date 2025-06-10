@@ -6,7 +6,7 @@ import com.testcityapp.data.local.CityDao
 import com.testcityapp.data.local.CityEmissionEntity
 import com.testcityapp.data.producer.CityEmissionProducer
 import com.testcityapp.domain.model.CityEmission
-import com.testcityapp.domain.usecase.CityRepository
+import com.testcityapp.data.repository.CityRepository
 import io.mockk.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

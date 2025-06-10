@@ -3,6 +3,7 @@ package com.testcityapp.domain.usecase
 import androidx.compose.ui.graphics.Color
 import app.cash.turbine.test
 import com.testcityapp.domain.model.CityEmission
+import com.testcityapp.data.repository.CityRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify

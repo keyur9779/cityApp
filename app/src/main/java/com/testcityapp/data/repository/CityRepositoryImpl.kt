@@ -5,7 +5,7 @@ import com.testcityapp.data.local.CityDao
 import com.testcityapp.data.local.CityEmissionEntity
 import com.testcityapp.domain.model.CityEmission
 import com.testcityapp.data.producer.CityEmissionProducer
-import com.testcityapp.domain.usecase.CityRepository
+import com.testcityapp.data.repository.CityRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -53,7 +53,7 @@ class CityRepositoryImpl @Inject constructor(
         }
     }
     
-    private suspend fun insertEmission(emission: CityEmission) {
+    override suspend fun insertEmission(emission: CityEmission) {
         // The color field is already saved in the entity;
         // displayColor is computed when retrieving from database
         cityDao.insertEmission(

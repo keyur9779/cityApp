@@ -7,8 +7,10 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.testcityapp.domain.model.CityEmission
-import com.testcityapp.domain.usecase.CityRepository
+import com.testcityapp.data.repository.CityRepository
 import com.testcityapp.domain.usecase.GetCityEmissionsUseCase
+import com.testcityapp.domain.usecase.StartEmissionProductionUseCase
+import com.testcityapp.domain.usecase.StopEmissionProductionUseCase
 import io.mockk.every
 import io.mockk.justRun
 import io.mockk.mockk
@@ -39,7 +41,9 @@ class MainViewModelTest {
     // Test dependencies
     private lateinit var application: Application
     private lateinit var repository: CityRepository
-    private lateinit var useCase: GetCityEmissionsUseCase
+    private lateinit var getCityEmissionsUseCase: GetCityEmissionsUseCase
+    private lateinit var startEmissionProductionUseCase: StartEmissionProductionUseCase
+    private lateinit var stopEmissionProductionUseCase: StopEmissionProductionUseCase
     private lateinit var workManager: WorkManager
     private lateinit var viewModel: MainViewModel
     private lateinit var lifecycleOwner: LifecycleOwner
@@ -60,17 +64,19 @@ class MainViewModelTest {
         mockkStatic(WorkManager::class)
         every { WorkManager.getInstance(any<Application>()) } returns workManager
         
-        // Create the use case with repository that returns test data
+        // Create the use cases with repository that returns test data
         val testEmissions = listOf(
             CityEmission(id = 1, city = "New York", color = "Blue", displayColor = Color.Blue, timestamp = LocalDateTime.now()),
             CityEmission(id = 2, city = "Los Angeles", color = "Red", displayColor = Color.Red, timestamp = LocalDateTime.now())
         )
         every { repository.getCityEmissions() } returns flowOf(testEmissions)
         
-        useCase = GetCityEmissionsUseCase(repository)
+        getCityEmissionsUseCase = GetCityEmissionsUseCase(repository)
+        startEmissionProductionUseCase = StartEmissionProductionUseCase(repository)
+        stopEmissionProductionUseCase = StopEmissionProductionUseCase(repository)
         
-        // Create the view model with domain interface
-        viewModel = MainViewModel(application, useCase, repository)
+        // Create the view model with the use cases
+        viewModel = MainViewModel(application, getCityEmissionsUseCase, startEmissionProductionUseCase, stopEmissionProductionUseCase)
     }
     
     @After
@@ -79,38 +85,48 @@ class MainViewModelTest {
     }
     
     @Test
-    fun `test startProducing calls repository`() {
+    fun `test startProducing calls startEmissionProductionUseCase`() {
+        // Given - Mock the use case
+        justRun { startEmissionProductionUseCase() }
+        
         // When
         viewModel.startProducing()
         
         // Then
-        verify { repository.startProducing() }
+        verify { startEmissionProductionUseCase() }
     }
     
     @Test
-    fun `test stopProducing calls repository`() {
+    fun `test stopProducing calls stopEmissionProductionUseCase`() {
+        // Given - Mock the use case
+        justRun { stopEmissionProductionUseCase() }
+        
         // When
         viewModel.stopProducing()
         
         // Then
-        verify { repository.stopProducing() }
+        verify { stopEmissionProductionUseCase() }
     }
     
 
     
     @Test
-    fun `test lifecycle callbacks call appropriate methods`() {
+    fun `test lifecycle callbacks call appropriate use cases`() {
+        // Given - Mock the use cases
+        justRun { startEmissionProductionUseCase() }
+        justRun { stopEmissionProductionUseCase() }
+        
         // When
         viewModel.onResume(lifecycleOwner)
         
         // Then
-        verify { repository.startProducing() }
+        verify { startEmissionProductionUseCase() }
         
         // When
         viewModel.onPause(lifecycleOwner)
         
         // Then
-        verify { repository.stopProducing() }
+        verify { stopEmissionProductionUseCase() }
     }
     
     @Test
@@ -124,7 +140,12 @@ class MainViewModelTest {
         every { repository.getCityEmissions() } returns flowOf(testEmissions)
         
         // Create a fresh view model to ensure we get fresh StateFlow
-        val freshViewModel = MainViewModel(application, GetCityEmissionsUseCase(repository), repository)
+        val freshViewModel = MainViewModel(
+            application, 
+            GetCityEmissionsUseCase(repository),
+            StartEmissionProductionUseCase(repository),
+            StopEmissionProductionUseCase(repository)
+        )
         
         // Launch a collection job in the test coroutine scope to ensure the StateFlow becomes active
         val job = launch {
@@ -145,11 +166,14 @@ class MainViewModelTest {
     }
     
     @Test
-    fun `test onCleared calls stopProducing`() {
+    fun `test onCleared calls stopEmissionProductionUseCase`() {
+        // Given - Mock the use case
+        justRun { stopEmissionProductionUseCase() }
+        
         // When
         viewModel.onCleared()
         
         // Then
-        verify { repository.stopProducing() }
+        verify { stopEmissionProductionUseCase() }
     }
 }
