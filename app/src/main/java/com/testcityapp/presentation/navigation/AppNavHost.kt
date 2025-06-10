@@ -22,6 +22,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.testcityapp.core.utils.isSideBySideMode
+import com.testcityapp.presentation.components.VerticalDivider
 import com.testcityapp.presentation.details.DetailsScreen
 import com.testcityapp.presentation.main.MainScreen
 import com.testcityapp.presentation.main.MainViewModel
@@ -95,8 +96,8 @@ fun AppNavHost(
                 }
 
                 // Update the selected emission when the navigation argument changes
-                LaunchedEffect(emission) {
-                    selectedEmissionState.value = emission
+                LaunchedEffect(selectedEmissionState) {
+                    //selectedEmissionState.value = emission
                     mainViewModel.scheduleWelcomeToast(emission.city)
                 }
 
@@ -117,11 +118,8 @@ fun AppNavHost(
                                         emissions.find { it.id == clickedEmission.id }
                                     if (targetEmission != null) {
                                         selectedEmissionState.value = targetEmission
-                                        // Log selection without navigation
-                                        Log.d(
-                                            "SplitView",
-                                            "Selected emission: ${targetEmission.city}"
-                                        )
+                                        mainViewModel.scheduleWelcomeToast(targetEmission.city)
+
                                     }
                                 },
                                 // Add additional parameter to highlight the currently selected item
@@ -131,7 +129,7 @@ fun AppNavHost(
                         }
 
                         // Add a visual separator between panels
-                        com.testcityapp.presentation.components.VerticalDivider()
+                        VerticalDivider()
 
                         // Detail view (map and city details)
                         Box(

@@ -17,7 +17,7 @@ class WelcomeWorker(
 ) : Worker(context, workerParams) {
 
     override fun doWork(): Result {
-        Log.d("doWork", "doWorkdoWork")
+        Log.d("MainViewModel", "doWorkdoWork")
         val cityName = inputData.getString(KEY_CITY_NAME) ?: return Result.failure()
 
         GlobalScope.launch(Dispatchers.Main) {

@@ -1,6 +1,7 @@
 package com.testcityapp.presentation.main
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -42,6 +43,8 @@ class MainViewModel @Inject constructor(
     }
 
     fun scheduleWelcomeToast(cityName: String) {
+
+        Log.d("MainViewModel", "Scheduling welcome toast for city: $cityName")
         val workData = Data.Builder()
             .putString(WelcomeWorker.KEY_CITY_NAME, cityName)
             .build()
