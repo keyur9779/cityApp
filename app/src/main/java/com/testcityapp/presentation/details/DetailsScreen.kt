@@ -20,8 +20,8 @@ import androidx.compose.ui.text.font.FontWeight
 import com.testcityapp.presentation.components.AppBodyText
 import com.testcityapp.presentation.components.AppText
 import com.testcityapp.presentation.components.AppTitleText
-import java.time.format.DateTimeFormatter
 import androidx.compose.runtime.Composable
+import com.testcityapp.core.utils.toFormattedString
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -190,7 +190,7 @@ fun DetailsScreen(
                         ) {
                             AppBodyText(text = "Time:")
                             AppText(
-                                text = emission.timestamp.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                                text = emission.timestamp.toFormattedString(),
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }

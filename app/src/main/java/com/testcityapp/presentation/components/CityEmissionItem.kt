@@ -8,7 +8,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.testcityapp.presentation.components.CityCard
 import com.testcityapp.domain.model.CityEmission
-import java.time.format.DateTimeFormatter
+import com.testcityapp.core.utils.toFormattedString
 
 @Composable
 fun CityEmissionItem(
@@ -30,7 +30,7 @@ fun CityEmissionItem(
     
     CityCard(
         title = emission.city,
-        subtitle = emission.timestamp.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+        subtitle = emission.timestamp.toFormattedString(),
         contentColor = emission.displayColor,
         backgroundColor = backgroundColor,
         elevation = elevation,
