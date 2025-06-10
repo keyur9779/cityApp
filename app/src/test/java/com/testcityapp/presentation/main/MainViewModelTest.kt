@@ -17,6 +17,7 @@ import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -94,7 +95,7 @@ class MainViewModelTest {
         verify { repository.stopProducing() }
     }
     
-
+   
     
     @Test
     fun `test lifecycle callbacks call appropriate methods`() {
@@ -113,16 +114,33 @@ class MainViewModelTest {
     
     @Test
     fun `test emissions StateFlow contains data from repository`() = runTest {
-        // With UnconfinedTestDispatcher, we need to run in a coroutine context to ensure StateFlow collects
+        // We need to setup the emissions into the StateFlow before checking its value
+        // Make sure our mocked repository returns the data we expect
+        val testEmissions = listOf(
+            CityEmission(id = 1, city = "New York", color = "Blue", timestamp = LocalDateTime.now()),
+            CityEmission(id = 2, city = "Los Angeles", color = "Red", timestamp = LocalDateTime.now())
+        )
+        every { repository.getCityEmissions() } returns flowOf(testEmissions)
         
-        // Allow time for the StateFlow to collect initial values
+        // Create a fresh view model to ensure we get fresh StateFlow
+        val freshViewModel = MainViewModel(application, GetCityEmissionsUseCase(repository), repository)
+        
+        // Launch a collection job in the test coroutine scope to ensure the StateFlow becomes active
+        val job = launch {
+            freshViewModel.emissions.collect {}
+        }
+        
+        // Advance the scheduler to process all coroutines
         testDispatcher.scheduler.advanceUntilIdle()
         
-        // Then - Verify that the emissions StateFlow has the correct data
-        val currentEmissions = viewModel.emissions.value
+        // Now verify the emissions StateFlow has the correct data
+        val currentEmissions = freshViewModel.emissions.value
         assertEquals(2, currentEmissions.size)
         assertEquals("New York", currentEmissions[0].city)
         assertEquals("Los Angeles", currentEmissions[1].city)
+        
+        // Clean up
+        job.cancel()
     }
     
     @Test
