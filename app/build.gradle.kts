@@ -140,21 +140,12 @@ dependencies {
     // Fix for kotlinx-metadata compatibility - use version compatible with Kotlin 1.9.22
     implementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.7.0")
     
-    // Retrofit
-    implementation(libs.square.retrofit)
 
-    // Gson
-    implementation(libs.google.code.gson)
-
-    // Retrofit with Gson Converter
-    implementation(libs.square.retrofit.converter.gson)
-    
     // Google Maps
     implementation("com.google.maps.android:maps-compose:4.3.0")
     implementation("com.google.android.gms:play-services-maps:18.2.0")
 
     // Testing
-    testImplementation(libs.junit)
     // Use direct coordinates for Robolectric
     testImplementation("org.robolectric:robolectric:4.10.3")
     testImplementation("io.mockk:mockk:1.13.8")
@@ -163,7 +154,5 @@ dependencies {
     testImplementation("app.cash.turbine:turbine:1.0.0") // Flow testing library
     testImplementation("androidx.test:core:1.5.0")
     testImplementation("androidx.test:core-ktx:1.5.0")
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
 }
 
