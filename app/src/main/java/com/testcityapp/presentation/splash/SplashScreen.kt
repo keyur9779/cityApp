@@ -9,9 +9,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import com.testcityapp.presentation.components.AppBodyText
+import com.testcityapp.presentation.components.AppCircularProgressIndicator
+import com.testcityapp.presentation.components.AppTitleText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -52,28 +53,24 @@ fun SplashScreen(onNavigateToMain: () -> Unit) {
             Spacer(modifier = Modifier.height(16.dp))
             
             // App name
-            Text(
+            AppTitleText(
                 text = "Random City App",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
             
             Spacer(modifier = Modifier.height(32.dp))
             
-            CircularProgressIndicator(
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(48.dp)
+            AppCircularProgressIndicator(
+                modifier = Modifier
             )
         }
         
         // Version info at bottom
-        Text(
+        AppBodyText(
             text = "Version 1.0",
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(16.dp),
-            fontSize = 12.sp,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
         )
     }

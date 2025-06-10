@@ -1,9 +1,9 @@
 package com.testcityapp.di
 
-import com.testcityapp.data.repository.CityRepositoryImpl
-import com.testcityapp.domain.repository.CityRepository
+import com.testcityapp.data.repository.CityRepository
 import com.testcityapp.domain.usecase.GetCityEmissionsUseCase
-import dagger.Binds
+import com.testcityapp.domain.usecase.StartEmissionProductionUseCase
+import com.testcityapp.domain.usecase.StopEmissionProductionUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,9 +16,19 @@ object UseCaseModule {
     
     @Provides
     @Singleton
-    fun provideGetCityEmissionsUseCase(repository: CityRepositoryImpl): GetCityEmissionsUseCase {
+    fun provideGetCityEmissionsUseCase(repository: CityRepository): GetCityEmissionsUseCase {
         return GetCityEmissionsUseCase(repository)
     }
-
-
+    
+    @Provides
+    @Singleton
+    fun provideStartEmissionProductionUseCase(repository: CityRepository): StartEmissionProductionUseCase {
+        return StartEmissionProductionUseCase(repository)
+    }
+    
+    @Provides
+    @Singleton
+    fun provideStopEmissionProductionUseCase(repository: CityRepository): StopEmissionProductionUseCase {
+        return StopEmissionProductionUseCase(repository)
+    }
 }

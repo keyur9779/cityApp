@@ -1,4 +1,4 @@
-package com.testcityapp.presentation.ui
+package com.testcityapp.core.utils
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalConfiguration

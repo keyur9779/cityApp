@@ -21,23 +21,20 @@ import org.robolectric.annotation.Config
 class CityEmissionProducerTest {
 
     private lateinit var producer: CityEmissionProducer
-    private lateinit var application: Application
-    
+
     @Before
     fun setUp() {
-        // Mock Application and Lifecycle
-        application = mockk<Application>()
-        val lifecycleOwner = mockk<ProcessLifecycleOwner>()
-        val lifecycle = mockk<Lifecycle>()
-        val state = Lifecycle.State.RESUMED
+        // Create a proper mocked lifecycle owner
+        val lifecycleOwner = mockk<ProcessLifecycleOwner>(relaxed = true)
+        val lifecycle = LifecycleRegistry(lifecycleOwner)
+        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
         
-        mockkStatic(ProcessLifecycleOwner::class)
-        every { ProcessLifecycleOwner.get() } returns lifecycleOwner
+        // Mock ProcessLifecycleOwner static methods
+        //every { ProcessLifecycleOwner.get() } returns lifecycleOwner
         every { lifecycleOwner.lifecycle } returns lifecycle
-        every { lifecycle.currentState } returns state
-        every { lifecycle.currentState.isAtLeast(any()) } returns true
         
-        producer = CityEmissionProducer(application)
+        // Create the producer
+        producer = CityEmissionProducer()
     }
     
     @Test
